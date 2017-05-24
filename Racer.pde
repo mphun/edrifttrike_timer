@@ -9,6 +9,7 @@ class Racer {
   int row = 135;
   boolean highlight = false;
   int trike;
+  int text_alpha = 255;
 
   Racer (int place, int lap_num){
     racer_name = "";
@@ -26,11 +27,10 @@ class Racer {
   }
 
   void get_time(int lap_num){
-    if ( stop ) {
-      pause_current[lap_num] = (millis() - pause_start[lap_num]); //<>//
+    if ( stop ) { //<>//
+      pause_current[lap_num] = (millis() - pause_start[lap_num]);
     }
     laps[lap_num] = millis() - pause_current[lap_num] - pause[lap_num];
-    //return time;
   }
 
   void start(int lap_num){
@@ -100,7 +100,6 @@ class Racer {
     int row_position;
     int timer_col = 1105;
 
-    //laps[0] =
     get_time(lap_num);
     row_position = row + ( 50 * place );
 
@@ -111,7 +110,7 @@ class Racer {
 
     textAlign(LEFT);
     textSize(35);
-    fill(255, 255, 255);
+    fill(255, 255, 255, text_alpha);
 
     //trike number
     text(trike, 45, row_position);
@@ -131,10 +130,10 @@ class Racer {
     textAlign(RIGHT);
     for ( int i = 0; i < laps.length; i ++ ){
       if ( lap_num == i ){
-        fill(255, 255, 255);
+        fill(255, 255, 255, text_alpha);
       }
       else{
-        fill(128, 128, 128);
+        fill(128, 128, text_alpha/2);
       }
       seconds = String.format("%05.2f",laps[i]/1000.0 % 60.0,2);
       minutes = nf(laps[i]/60000,2);

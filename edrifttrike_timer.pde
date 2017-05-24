@@ -3,6 +3,15 @@ int RACER_NUM = 5;
 int current_edit = -1;
 int LAPS = 2;
 int current_lap = 0;
+
+//next button
+int next_x = 978;
+int next_y = 650;
+int button_width = 100;
+int button_height = 50;
+int reset_x = 1098;
+int reset_y = 650;
+
 Racer[] racers = new Racer[RACER_NUM];
 void setup()
 {
@@ -10,7 +19,7 @@ void setup()
   bg = loadImage("trike_timer_3.png");
   for (int i = 0; i < racers.length; i++){
      racers[i] = new Racer(i, LAPS);
-  } //<>//
+  }
 }
 
 void draw()
@@ -18,12 +27,26 @@ void draw()
   background(bg);
   for (int i = 0; i < racers.length; i++){
     racers[i].racerDisplay(current_lap);
-  } //<>//
+  }
   if ( current_edit >= 0 ) {
     if (frameCount% 20== 0) {
       racers[current_edit].highlight_toggle();
     }
   }
+
+  //Next button
+  fill(220, 243, 14);
+  rect(next_x, next_y, button_width, button_height, 10);
+  fill(0, 0, 0);
+  textSize(35);
+  text("Next", next_x + 90, next_y + 38);
+
+  //Reset button
+    fill(220, 243, 14);
+  rect(reset_x, reset_y, button_width, button_height, 10);
+  fill(0, 0, 0);
+  textSize(35);
+  text("Reset", reset_x + 95, reset_y + 38);
 
 }
 
@@ -57,15 +80,10 @@ void keyPressed() {
     }
     switch(key){
       case 'r':
-        for (int i = 0; i < racers.length; i++){
-          racers[i].reset_current(current_lap);
-        }
+        reset_lap();
         break;
       case 'n':
-        for (int i = 0; i < racers.length; i++){
-          racers[i].pause(current_lap);
-        }
-        current_lap = (current_lap +1) % LAPS;
+        next_lap();
         break;
 
     }
@@ -78,6 +96,25 @@ void mousePressed() {
     if ( racers[i].hover(mouseY)) {
        current_edit = i;
     }
+  }
+  if ( mouseX > next_x && mouseX < (next_x + button_width) && mouseY > next_y && mouseY < (next_y + button_height) ){
+    next_lap();
+  }
+  if ( mouseX > reset_x && mouseX < (reset_x + button_width) && mouseY > reset_y && mouseY < (reset_y + button_height) ){
+    reset_lap();
+  }
+}
+
+void next_lap () {
+  for (int i = 0; i < racers.length; i++){
+    racers[i].pause(current_lap);
+  }
+  current_lap = (current_lap +1) % LAPS;
+}
+
+void reset_lap () {
+  for (int i = 0; i < racers.length; i++){
+    racers[i].reset_current(current_lap);
   }
 }
 
