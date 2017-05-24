@@ -1,39 +1,22 @@
 class Racer {
   String racer_name;
-  float[] laps;
-  int time;
-  int pause;
-  int pausestart;
-  int pauseend;
-  int total_pause;
+  int[] laps;
+  int[] pause;
+  int[] pause_start;
+  int[] pause_current;
   boolean stop;
   int place;
   int row = 135;
   boolean highlight = false;
   int trike;
 
-  Racer (String name, int lap_num, int place){
-    racer_name = name;
-    laps = new float[lap_num];
-    stop = true;
-    time=0;
-    pause = 0;
-    pausestart = 0;
-    pauseend = 0;
-    total_pause = 0;
-    this.place = place;
-    trike = place;
-  }
-
-  Racer (int place){
+  Racer (int place, int lap_num){
     racer_name = "";
-    laps = new float[2];
+    laps = new int[lap_num];
+    pause = new int[lap_num];
+    pause_current = new int[lap_num];
+    pause_start = new int[lap_num];
     stop = true;
-    time=0;
-    pause = 0;
-    pausestart = 0;
-    pauseend = 0;
-    total_pause = 0;
     this.place = place;
     trike = place;
   }
@@ -42,36 +25,40 @@ class Racer {
     return racer_name;
   }
 
-  int get_time(){
+  void get_time(int lap_num){
     if ( stop ) {
-      total_pause = (millis() - pausestart); //<>//
+      pause_current[lap_num] = (millis() - pause_start[lap_num]); //<>//
     }
-    time = millis() - total_pause - pause;
-    return time;
+    laps[lap_num] = millis() - pause_current[lap_num] - pause[lap_num];
+    //return time;
   }
 
-  void start(){
-    stop = false;
-    pause = pause + total_pause;
-    total_pause = 0;
+  void start(int lap_num){
+    if ( stop ){
+      stop = false;
+      pause[lap_num] = pause[lap_num] + pause_current[lap_num];
+      pause_current[lap_num] = 0;
+    }
   }
 
-  void pause(){
-    stop = true;
-    pausestart = millis();
+  void pause(int lap_num){
+    if ( !stop ){
+      stop = true;
+      pause_start[lap_num] = millis();
+    }
   }
 
-  void reset_current(){
-    pause = millis();
-    pausestart=millis();
+  void reset_current(int lap_num){
+    pause[lap_num] = millis();
+    pause_start[lap_num] = millis();
   }
 
-  void toggle(){
+  void time_toggle(int lap_num){
     if ( stop ) {
-      start();
+      start(lap_num);
     }
     else{
-      pause();
+      pause(lap_num);
     }
   }
 
@@ -105,20 +92,17 @@ class Racer {
     }
   }
 
-  void racerDisplay()
+  void racerDisplay(int lap_num)
   {
-    int time = get_time();
     String seconds;
     String minutes;
     String format_time;
     int row_position;
     int timer_col = 1105;
 
+    //laps[0] =
+    get_time(lap_num);
     row_position = row + ( 50 * place );
-
-    seconds = String.format("%05.2f",time/1000.0 % 60.0,2);
-    minutes = nf(time/60000,2);
-    format_time = String.format("%s:%s", minutes, seconds);
 
     if (highlight){
       fill(255,255,255, 50);
@@ -135,29 +119,32 @@ class Racer {
     //Racer
     text(racer_name, 165, row_position);
 
-    //LAP1
-    textAlign(RIGHT);
-    text(format_time, timer_col, row_position);
-
-    //LAP2
-    timer_col = 1270;
-    minutes = "00";
-    seconds = "00.00";
-    format_time = String.format("%s:%s", minutes, seconds);
-    text(format_time, timer_col, row_position);
-
     //place
     textAlign(RIGHT);
     text( place +1 , 917, row_position);
 
-     if( hover(mouseY)) {
-       fill(220, 243, 14, 50);
-       rect(0,row_position-30,1280,38);
-     }
-
     //divider
     fill(220, 243, 14);
     rect(0,row_position + 12,1280,5);
-  }
 
+    //Racers time
+    textAlign(RIGHT);
+    for ( int i = 0; i < laps.length; i ++ ){
+      if ( lap_num == i ){
+        fill(255, 255, 255);
+      }
+      else{
+        fill(128, 128, 128);
+      }
+      seconds = String.format("%05.2f",laps[i]/1000.0 % 60.0,2);
+      minutes = nf(laps[i]/60000,2);
+      format_time = String.format("%s:%s", minutes, seconds);
+      text(format_time, timer_col + (165 * i), row_position);
+    }
+
+    if( hover(mouseY)) {
+      fill(220, 243, 14, 50);
+      rect(0,row_position-30,1280,38);
+    }
+  }
 }

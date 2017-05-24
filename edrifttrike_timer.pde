@@ -1,13 +1,15 @@
 PImage bg;
 int RACER_NUM = 5;
-int current_edit= -1;
+int current_edit = -1;
+int LAPS = 2;
+int current_lap = 0;
 Racer[] racers = new Racer[RACER_NUM];
 void setup()
 {
   size (1280, 720);
   bg = loadImage("trike_timer_3.png");
   for (int i = 0; i < racers.length; i++){
-     racers[i] = new Racer(i);
+     racers[i] = new Racer(i, LAPS);
   } //<>//
 }
 
@@ -15,7 +17,7 @@ void draw()
 {
   background(bg);
   for (int i = 0; i < racers.length; i++){
-    racers[i].racerDisplay();
+    racers[i].racerDisplay(current_lap);
   } //<>//
   if ( current_edit >= 0 ) {
     if (frameCount% 20== 0) {
@@ -47,16 +49,25 @@ void keyPressed() {
     }
   }
   else {
-    if( match(str(key),"[0-9]") != null){
-     key_int = int(key) - '0' - 1;
-     racers[key_int].toggle();
+    if( match(str(key),"[1-9]") != null){
+      if ( (key - '0') <= RACER_NUM ){
+        key_int = int(key) - '0' - 1;
+        racers[key_int].time_toggle(current_lap);
+      }
     }
     switch(key){
       case 'r':
         for (int i = 0; i < racers.length; i++){
-          racers[i].reset_current();
+          racers[i].reset_current(current_lap);
         }
         break;
+      case 'n':
+        for (int i = 0; i < racers.length; i++){
+          racers[i].pause(current_lap);
+        }
+        current_lap = (current_lap +1) % LAPS;
+        break;
+
     }
   }
 }
