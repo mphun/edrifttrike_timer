@@ -5,21 +5,21 @@ class Racer {
   int[] pause_start;
   int[] pause_current;
   boolean stop;
-  int place;
+  //int place;
   int row = 135;
   boolean highlight = false;
   int trike;
   int text_alpha = 255;
 
-  Racer (int place, int lap_num){
+  Racer (int place, int trike, int lap_num){
     racer_name = "";
     laps = new int[lap_num];
     pause = new int[lap_num];
     pause_current = new int[lap_num];
     pause_start = new int[lap_num];
     stop = true;
-    this.place = place;
-    trike = place;
+    //this.place = place;
+    this.trike = trike;
   }
 
   String get_name(){
@@ -27,7 +27,7 @@ class Racer {
   }
 
   void get_time(int lap_num){
-    if ( stop ) { //<>//
+    if ( stop ) { //<>// //<>//
       pause_current[lap_num] = (millis() - pause_start[lap_num]);
     }
     laps[lap_num] = millis() - pause_current[lap_num] - pause[lap_num];
@@ -78,7 +78,29 @@ class Racer {
       highlight = false;
   }
 
-  boolean hover(int mouse_y){
+  void dim_text(){
+    text_alpha -= 3;
+  }
+
+  void light_text(){
+    text_alpha += 3;
+  }
+
+  int get_text_alpha(){
+    return text_alpha;
+  }
+
+  int get_best_time(){
+    int best = laps[0];
+    for (int i = 1; i < laps.length; i++){
+      if ( laps[i] < best && laps[i] > 0){
+        best = laps[i];
+      }
+    }
+    return best;
+  }
+
+  boolean hover(int mouse_y, int place){
     int row_position;
 
     row_position = row + ( 50 * place );
@@ -92,7 +114,7 @@ class Racer {
     }
   }
 
-  void racerDisplay(int lap_num)
+  void racerDisplay(int lap_num, int place)
   {
     String seconds;
     String minutes;
@@ -133,7 +155,7 @@ class Racer {
         fill(255, 255, 255, text_alpha);
       }
       else{
-        fill(128, 128, text_alpha/2);
+        fill(255, 255, 255, text_alpha/2);
       }
       seconds = String.format("%05.2f",laps[i]/1000.0 % 60.0,2);
       minutes = nf(laps[i]/60000,2);
@@ -141,9 +163,26 @@ class Racer {
       text(format_time, timer_col + (165 * i), row_position);
     }
 
-    if( hover(mouseY)) {
+    if( hover(mouseY, place)) {
       fill(220, 243, 14, 50);
       rect(0,row_position-30,1280,38);
     }
+  }
+}
+
+class CompareRacers implements Comparator {
+  int compare(Object o1, Object o2) {
+      int racer1 = ((Racer) o1).get_best_time();
+      int racer2 = ((Racer) o2).get_best_time();
+      if (racer1 < racer2 && racer1 > 0){
+        return -1;
+      }
+      if ( racer1 == racer2 ){
+         return 0;
+      }
+      if (racer2 > racer1 || racer2 == 0){
+         return 1;
+      }
+      return 500;
   }
 }
