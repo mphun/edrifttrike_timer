@@ -1,8 +1,9 @@
 PImage bg;
-int RACER_NUM = 5;
+int number_of_racers;
 int current_edit = -1;
 int LAPS = 2;
 int current_lap = 0;
+JSONObject config;
 
 //next button
 int next_x = 978;
@@ -12,9 +13,13 @@ int button_height = 50;
 int reset_x = 1098;
 int reset_y = 650;
 
-Racer[] racers = new Racer[RACER_NUM];
+Racer[] racers;
 void setup()
 {
+  config = loadJSONObject("config.json");
+  number_of_racers = config.getInt("number_of_racers");
+  racers = new Racer[number_of_racers];
+
   size (1280, 720);
   bg = loadImage("trike_timer_3.png");
   for (int i = 0; i < racers.length; i++){
@@ -65,7 +70,7 @@ void keyPressed() {
       case TAB:
         next_edit = current_edit;
         returnFromEdit();
-        current_edit = (next_edit +1) % RACER_NUM;
+        current_edit = (next_edit +1) % number_of_racers;
         break;
       default:
         racers[current_edit].add_char(key);
@@ -73,7 +78,7 @@ void keyPressed() {
   }
   else {
     if( match(str(key),"[1-9]") != null){
-      if ( (key - '0') <= RACER_NUM ){
+      if ( (key - '0') <= number_of_racers ){
         key_int = int(key) - '0' - 1;
         racers[key_int].time_toggle(current_lap);
       }
