@@ -86,6 +86,7 @@ void draw()
       dim = false;
       Arrays.sort(racers, new CompareRacers());
       delay(3);
+      next_lap();
       light = true;
     }
   }
@@ -136,7 +137,6 @@ void keyPressed() {
         break;
       case 'n':
         dim = true;
-        next_lap();
         break;
       case 's':
         save();
@@ -148,7 +148,6 @@ void keyPressed() {
 void mousePressed() {
   if ( mouseX > next_x && mouseX < (next_x + button_width) && mouseY > next_y && mouseY < (next_y + button_height) ){
     dim = true;
-    next_lap();
   }
   if ( mouseX > save_x && mouseX < (save_x + button_width) && mouseY > save_y && mouseY < (save_y + button_height) ){
     save();
