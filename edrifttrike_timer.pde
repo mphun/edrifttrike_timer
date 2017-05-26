@@ -1,5 +1,6 @@
 import java.util.Arrays;
 import java.util.Comparator;
+import static javax.swing.JOptionPane.*;
 
 PImage bg;
 int number_of_racers;
@@ -9,14 +10,17 @@ int current_lap = 0;
 JSONObject config;
 
 //next button
-int next_x = 978;
+int next_x = 950;
 int next_y = 650;
+int reset_x = 1060;
+int reset_y = 650;
+int save_x = 1170;
+int save_y = 650;
 int button_width = 100;
 int button_height = 50;
-int reset_x = 1098;
-int reset_y = 650;
 boolean dim = false;
 boolean light = false;
+boolean save_sign = false;
 
 Racer[] racers;
 void setup()
@@ -49,16 +53,25 @@ void draw()
   fill(220, 243, 14);
   rect(next_x, next_y, button_width, button_height, 10);
   fill(0, 0, 0);
+  textAlign(CENTER, TOP);
   textSize(35);
-  text("Next", next_x + 90, next_y + 38);
+  text("Next", next_x, next_y, button_width, button_height);
 
   //Reset button
   fill(220, 243, 14);
   rect(reset_x, reset_y, button_width, button_height, 10);
   fill(0, 0, 0);
+  textAlign(CENTER, TOP);
   textSize(35);
-  text("Reset", reset_x + 95, reset_y + 38);
+  text("Reset", reset_x, reset_y, button_width, button_height);
 
+  //save button
+  fill(220, 243, 14);
+  rect(save_x, save_y, button_width, button_height, 10);
+  fill(0, 0, 0);
+  textAlign(CENTER, TOP);
+  textSize(35);
+  text("Save", save_x, save_y, button_width, button_height);
 
   //animate sorting racers
   if ( dim ){
@@ -123,23 +136,33 @@ void keyPressed() {
         dim = true;
         next_lap();
         break;
+      case 's':
+        saveFrame("screenshot-#####.png");
+        showMessageDialog(null, "Screenshot Saved", "SAVED", INFORMATION_MESSAGE);
+        break;
     }
   }
 }
 
 void mousePressed() {
-  returnFromEdit();
-  for (int i = 0; i < racers.length; i++){
-    if ( racers[i].hover(mouseY, i)) {
-       current_edit = i;
-    }
-  }
   if ( mouseX > next_x && mouseX < (next_x + button_width) && mouseY > next_y && mouseY < (next_y + button_height) ){
     dim = true;
     next_lap();
   }
+  if ( mouseX > save_x && mouseX < (save_x + button_width) && mouseY > save_y && mouseY < (save_y + button_height) ){
+    saveFrame("screenshot-#####.png");
+    showMessageDialog(null, "Screenshot Saved", "SAVED", INFORMATION_MESSAGE);
+  }
   if ( mouseX > reset_x && mouseX < (reset_x + button_width) && mouseY > reset_y && mouseY < (reset_y + button_height) ){
     reset_lap();
+  }
+  else{
+    returnFromEdit();
+  }
+  for (int i = 0; i < racers.length; i++){
+    if ( racers[i].hover(mouseY, i)) {
+       current_edit = i;
+    }
   }
 }
 
@@ -151,8 +174,14 @@ void next_lap () {
 }
 
 void reset_lap () {
-  for (int i = 0; i < racers.length; i++){
-    racers[i].reset_current(current_lap);
+  println(current_edit);
+  if ( current_edit >= 0 ) {
+    racers[current_edit].reset_current(current_lap);
+  }
+  else {
+    for (int i = 0; i < racers.length; i++){
+      racers[i].reset_current(current_lap);
+    }
   }
 }
 
