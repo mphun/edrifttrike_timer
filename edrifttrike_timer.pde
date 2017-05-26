@@ -1,6 +1,8 @@
 import java.util.Arrays;
 import java.util.Comparator;
 import static javax.swing.JOptionPane.*;
+import java.util.*;
+import java.text.SimpleDateFormat;
 
 PImage bg;
 int number_of_racers;
@@ -137,8 +139,7 @@ void keyPressed() {
         next_lap();
         break;
       case 's':
-        saveFrame("screenshot-#####.png");
-        showMessageDialog(null, "Screenshot Saved", "SAVED", INFORMATION_MESSAGE);
+        save();
         break;
     }
   }
@@ -150,8 +151,7 @@ void mousePressed() {
     next_lap();
   }
   if ( mouseX > save_x && mouseX < (save_x + button_width) && mouseY > save_y && mouseY < (save_y + button_height) ){
-    saveFrame("screenshot-#####.png");
-    showMessageDialog(null, "Screenshot Saved", "SAVED", INFORMATION_MESSAGE);
+    save();
   }
   if ( mouseX > reset_x && mouseX < (reset_x + button_width) && mouseY > reset_y && mouseY < (reset_y + button_height) ){
     reset_lap();
@@ -190,4 +190,19 @@ void returnFromEdit(){
     racers[i].highlight_off();
     current_edit=-1;
   }
+}
+
+void save(){
+
+  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm");
+  Date date = new Date();
+
+  saveFrame("screenshot/screenshot-#####.png");
+  showMessageDialog(null, "Screenshot Saved", "SAVED", INFORMATION_MESSAGE);
+  JSONArray racers_data = new JSONArray();
+  for (int i = 0; i < racers.length; i++){
+    racers_data.setJSONObject(i,racers[i].get_racer_json());
+  }
+
+  saveJSONArray(racers_data, "data/race_time" + sdf.format(date.getTime()) + ".json");
 }

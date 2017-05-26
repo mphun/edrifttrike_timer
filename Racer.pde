@@ -114,6 +114,15 @@ class Racer {
     }
   }
 
+  JSONObject get_racer_json(){
+    JSONObject racer = new JSONObject();
+
+    racer.setString("name", racer_name);
+    racer.setInt("time", get_best_time());
+
+    return racer;
+  }
+
   void racerDisplay(int lap_num, int place)
   {
     String seconds;
