@@ -10,16 +10,18 @@ class Racer {
   boolean highlight = false;
   int trike;
   int text_alpha = 255;
+  String ir_code;
+  int ir_delay = millis();
 
-  Racer (int place, int trike, int lap_num){
+  Racer (int trike, int lap_num, String ir_code){
     racer_name = "";
     laps = new int[lap_num];
     pause = new int[lap_num];
     pause_current = new int[lap_num];
     pause_start = new int[lap_num];
     stop = true;
-    //this.place = place;
     this.trike = trike;
+    this.ir_code = ir_code;
   }
 
   String get_name(){
@@ -177,6 +179,13 @@ class Racer {
       rect(0,row_position-30,1280,38);
     }
   }
+  void is_ir_match(String hex_code, int current_lap){
+    if ( hex_code != null && hex_code.equals(ir_code) && ir_delay + 1000 < millis()) {
+      this.time_toggle(current_lap);
+      ir_delay = millis();
+    }
+  }
+
 }
 
 class CompareRacers implements Comparator {

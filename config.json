@@ -1,3 +1,22 @@
-{
-  "number_of_racers": "5" 
-}
+[
+  {
+    id: 0,
+    ir_code: "A90"
+  },
+  {
+    id: 1,
+    ir_code: "A91"
+  },
+  {
+    id: 2,
+    ir_code: "A92"
+  },
+  {
+    id: 3,
+    ir_code: "A93"
+  },
+  {
+    id: 4,
+    ir_code: "A94"
+  }
+]

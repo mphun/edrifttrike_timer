@@ -3,13 +3,14 @@ import java.util.Comparator;
 import static javax.swing.JOptionPane.*;
 import java.util.*;
 import java.text.SimpleDateFormat;
+import processing.serial.*;
 
 PImage bg;
 int number_of_racers;
 int current_edit = -1;
 int LAPS = 2;
 int current_lap = 0;
-JSONObject config;
+JSONArray config;
 
 //next button
 int next_x = 950;
@@ -23,18 +24,26 @@ int button_height = 50;
 boolean dim = false;
 boolean light = false;
 boolean save_sign = false;
+int time_delay = 0;
+
+Serial myPort;
+
+String serial_val;
 
 Racer[] racers;
 void setup()
 {
-  config = loadJSONObject("config.json");
-  number_of_racers = config.getInt("number_of_racers");
+  String portName = Serial.list()[1];
+  myPort = new Serial(this, portName, 9600);
+
+  config = loadJSONArray("config2.json");
+  number_of_racers = config.size();
   racers = new Racer[number_of_racers];
 
   size (1280, 720);
   bg = loadImage("trike_timer_3.png");
   for (int i = 0; i < racers.length; i++){
-     racers[i] = new Racer(i, i, LAPS);
+     racers[i] = new Racer(i, LAPS, config.getJSONObject(i).getString("ir_code"));
   }
 }
 
@@ -101,6 +110,9 @@ void draw()
       light = false;
     }
   }
+
+  serialport_actions();
+
 }
 
 void keyPressed() {
@@ -169,6 +181,8 @@ void next_lap () {
   for (int i = 0; i < racers.length; i++){
     racers[i].pause(current_lap);
   }
+
+
   current_lap = (current_lap +1) % LAPS;
 }
 
@@ -204,4 +218,16 @@ void save(){
   }
 
   saveJSONArray(racers_data, "data/race_time" + sdf.format(date.getTime()) + ".json");
+}
+
+void serialport_actions(){
+  if ( myPort.available() > 0) {
+    serial_val = myPort.readStringUntil(10);
+    if ( serial_val != null ){
+      println(trim(serial_val));
+      for (int i = 0; i < racers.length; i++){
+        racers[i].is_ir_match(trim(serial_val), current_lap);
+      }
+    }
+  }
 }
