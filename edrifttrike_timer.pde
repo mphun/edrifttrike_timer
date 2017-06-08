@@ -25,16 +25,21 @@ boolean dim = false;
 boolean light = false;
 boolean save_sign = false;
 int time_delay = 0;
+boolean serial_connection = false;
 
 Serial myPort;
-
 String serial_val;
-
 Racer[] racers;
 void setup()
 {
   String portName = Serial.list()[1];
-  myPort = new Serial(this, portName, 9600);
+  try{
+    myPort = new Serial(this, portName, 9600);
+    println("serial port " + myPort + " is not connected, skipping now");
+    serial_connection = true;
+  }catch(Exception e){
+    println("serial port " + myPort + " is not connected, skipping now");
+  }
 
   config = loadJSONArray("config2.json");
   number_of_racers = config.size();
@@ -110,9 +115,9 @@ void draw()
       light = false;
     }
   }
-
-  serialport_actions();
-
+  if ( serial_connection ){
+    serialport_actions();
+  }
 }
 
 void keyPressed() {
