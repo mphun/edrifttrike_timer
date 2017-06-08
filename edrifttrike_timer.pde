@@ -32,13 +32,16 @@ String serial_val;
 Racer[] racers;
 void setup()
 {
+  println("list of serials:");
+
   String portName = Serial.list()[1];
+  printArray(Serial.list());
   try{
     myPort = new Serial(this, portName, 9600);
-    println("serial port " + myPort + " is not connected, skipping now");
+    println("serial port " + portName + " is not connected, skipping now");
     serial_connection = true;
   }catch(Exception e){
-    println("serial port " + myPort + " is not connected, skipping now");
+    println("serial port " + portName + " is not connected, skipping now");
   }
 
   config = loadJSONArray("config2.json");
@@ -211,7 +214,6 @@ void returnFromEdit(){
 }
 
 void save(){
-
   SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm");
   Date date = new Date();
 
