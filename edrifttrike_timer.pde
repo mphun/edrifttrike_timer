@@ -38,13 +38,13 @@ void setup()
   printArray(Serial.list());
   try{
     myPort = new Serial(this, portName, 9600);
-    println("serial port " + portName + " is not connected, skipping now");
+    println("serial port " + portName + " Connected!!");
     serial_connection = true;
   }catch(Exception e){
     println("serial port " + portName + " is not connected, skipping now");
   }
 
-  config = loadJSONArray("config2.json");
+  config = loadJSONArray("config.json");
   number_of_racers = config.size();
   racers = new Racer[number_of_racers];
 

@@ -14,7 +14,7 @@ class Racer {
   int ir_delay = millis();
 
   Racer (int trike, int lap_num, String ir_code){
-    racer_name = "";
+    racer_name = ir_code;
     laps = new int[lap_num];
     pause = new int[lap_num];
     pause_current = new int[lap_num];
@@ -29,7 +29,7 @@ class Racer {
   }
 
   void get_time(int lap_num){
-    if ( stop ) { //<>// //<>//
+    if ( stop ) {
       pause_current[lap_num] = (millis() - pause_start[lap_num]);
     }
     laps[lap_num] = millis() - pause_current[lap_num] - pause[lap_num];
