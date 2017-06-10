@@ -51,15 +51,20 @@ void setup()
   ir_codes = config.getJSONArray("ir_code");
   serial_num = config.getInt("serial_ports");
   println(serial_num);
-  println("list of serials:");
-  String portName = Serial.list()[serial_num];
-  printArray(Serial.list());
-  try{
-    myPort = new Serial(this, portName, 9600);
-    println("serial port " + portName + " Connected!!");
-    serial_connection = true;
-  }catch(Exception e){
-    println("serial port " + portName + " is not connected, skipping now");
+  if ( Serial.list().length > 0 ){
+    println("list of serials:");
+    printArray(Serial.list());
+    try{
+      String portName = Serial.list()[serial_num];
+      myPort = new Serial(this, portName, 9600);
+      println("serial port " + portName + " Connected!!");
+      serial_connection = true;
+    }catch(Exception e){
+      println("serial port is not connected, skipping now");
+    }
+  }
+  else{
+    println("No Serial Port Available");
   }
   number_of_racers = ir_codes.size();
   racers = new Racer[number_of_racers];
